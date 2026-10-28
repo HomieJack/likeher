@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#fbf6f3" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#17121a" media="(prefers-color-scheme: dark)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="likeher">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="description" content="Your workout plan, set up once. Check it off every day.">
+  <title>likeher</title>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&display=swap">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <div id="app">
+    <main id="screens">
+      <section class="screen" id="screen-exercises" aria-label="Exercises"></section>
+      <section class="screen active" id="screen-workout" aria-label="Workout"></section>
+      <section class="screen" id="screen-stats" aria-label="Stats"></section>
+    </main>
+
+    <nav class="tabbar" aria-label="Main">
+      <button class="tab" data-tab="exercises" aria-label="Exercises">
+        <svg viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="2"/><rect x="13.5" y="3.5" width="7" height="7" rx="2"/><rect x="3.5" y="13.5" width="7" height="7" rx="2"/><path d="M17 14v6M14 17h6"/></svg>
+        <span>Exercises</span>
+      </button>
+      <button class="tab tab-main active" data-tab="workout" aria-label="Workout">
+        <span class="tab-orb">
+          <svg viewBox="0 0 24 24"><path d="M6.5 6.5v11M17.5 6.5v11M3.5 9v6M20.5 9v6M6.5 12h11"/></svg>
+        </span>
+        <span>Workout</span>
+      </button>
+      <button class="tab" data-tab="stats" aria-label="Stats">
+        <svg viewBox="0 0 24 24"><path d="M4 20V11M10 20V5M16 20v-7M21 20H3"/></svg>
+        <span>Stats</span>
+      </button>
+    </nav>
+  </div>
+
+  <div id="layer"></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <script src="js/exercises.js"></script>
+  <script src="js/figure.js"></script>
+  <script src="js/body.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

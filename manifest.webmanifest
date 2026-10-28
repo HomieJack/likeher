@@ -1,0 +1,16 @@
+{
+  "name": "likeher",
+  "short_name": "likeher",
+  "description": "Your workout plan, set up once. Check it off every day.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#fbf6f3",
+  "theme_color": "#fbf6f3",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml" }
+  ]
+}
