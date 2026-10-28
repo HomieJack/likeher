@@ -1,5 +1,5 @@
 /* likeher service worker: offline cache. Bump VERSION when you change files. */
-const VERSION = 'likeher-v2';
+const VERSION = 'likeher-v3';
 const ASSETS = [
   './', 'index.html', 'css/app.css', 'js/exercises.js', 'js/figure.js', 'js/body.js', 'js/app.js',
   'manifest.webmanifest', 'icons/icon.svg', 'icons/icon-192.png', 'icons/icon-512.png',

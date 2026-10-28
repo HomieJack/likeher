@@ -37,6 +37,7 @@
   }
 
   const ICON = {
+    x: '<svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg>',
     pencil: '<svg viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg>',
     left: '<svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>',
     right: '<svg viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></svg>',
@@ -197,11 +198,17 @@
     const layer = $('#layer');
     const wrap = document.createElement('div');
     wrap.className = 'sheet-wrap';
-    wrap.innerHTML = `<div class="backdrop"></div><div class="sheet ${cls}" role="dialog" aria-modal="true"><div class="grab"></div>${html}</div>`;
+    wrap.innerHTML = `<div class="backdrop"></div><div class="sheet ${cls}" role="dialog" aria-modal="true">
+      <div class="sheet-top"><div class="grab"></div><button class="sheet-x" aria-label="Close">${ICON.x}</button></div>${html}</div>`;
     layer.appendChild(wrap);
     requestAnimationFrame(() => wrap.classList.add('open'));
     const sheet = $('.sheet', wrap);
+    const backdrop = $('.backdrop', wrap);
+    let closed = false;
     const close = () => {
+      if (closed) return;
+      closed = true;
+      sheet.style.transition = ''; sheet.style.transform = ''; backdrop.style.opacity = '';
       wrap.classList.remove('open');
       document.removeEventListener('keydown', onKey);
       setTimeout(() => wrap.remove(), 260);
@@ -209,16 +216,38 @@
     };
     const onKey = (e) => { if (e.key === 'Escape' && wrap === layer.lastElementChild) close(); };
     document.addEventListener('keydown', onKey);
-    $('.backdrop', wrap).addEventListener('click', close);
-    // drag the grab handle down to dismiss
-    let y0 = null;
-    const grab = $('.grab', wrap);
-    grab.addEventListener('touchstart', (e) => { y0 = e.touches[0].clientY; }, { passive: true });
-    grab.addEventListener('touchmove', (e) => { if (y0 != null) sheet.style.transform = `translateY(${Math.max(0, e.touches[0].clientY - y0)}px)`; }, { passive: true });
-    grab.addEventListener('touchend', (e) => {
-      const dy = e.changedTouches[0].clientY - y0; y0 = null; sheet.style.transform = '';
-      if (dy > 80) close();
-    });
+    backdrop.addEventListener('click', close);
+    $('.sheet-x', wrap).addEventListener('click', close);
+    // swipe down to dismiss: from the handle any time, from anywhere else once scrolled to the top
+    let x0 = 0, y0 = null, t0 = 0, dy = 0, dragging = false, fromTop = false;
+    sheet.addEventListener('touchstart', (e) => {
+      y0 = null;
+      if (e.touches.length > 1 || e.target.closest('input, textarea, select, .stepper, .chips.scroll')) return;
+      x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; t0 = Date.now();
+      dy = 0; dragging = false; fromTop = !!e.target.closest('.sheet-top');
+    }, { passive: true });
+    sheet.addEventListener('touchmove', (e) => {
+      if (y0 == null) return;
+      const d = e.touches[0].clientY - y0, dx = e.touches[0].clientX - x0;
+      if (!dragging) {
+        if (Math.abs(d) < 8 && Math.abs(dx) < 8) return;
+        if (d < 0 || Math.abs(dx) > Math.abs(d) || (!fromTop && sheet.scrollTop > 0)) { y0 = null; return; }
+        dragging = true; sheet.style.transition = 'none';
+      }
+      e.preventDefault();
+      dy = Math.max(0, d - 8);
+      sheet.style.transform = `translateY(${dy}px)`;
+      backdrop.style.opacity = String(Math.max(0, 1 - dy / (sheet.offsetHeight || 1)));
+    }, { passive: false });
+    const endDrag = () => {
+      if (!dragging) { y0 = null; return; }
+      dragging = false; y0 = null;
+      const fast = dy / Math.max(1, Date.now() - t0) > 0.5;
+      if (dy > Math.min(140, sheet.offsetHeight * 0.25) || (fast && dy > 40)) close();
+      else { sheet.style.transition = ''; sheet.style.transform = ''; backdrop.style.opacity = ''; }
+    };
+    sheet.addEventListener('touchend', endDrag);
+    sheet.addEventListener('touchcancel', endDrag);
     return { el: sheet, close };
   }
 
